@@ -1,0 +1,168 @@
+/**
+ * YouTube Classic Theater Mode
+ * CSS-only restoration of the classic theater layout on /watch pages.
+ * Scoped to ytd-watch-flexy[theater] — no effect on Home, Shorts, Channel, etc.
+ */
+
+/* -------------------------------------------------------------------------- */
+/* Player: full horizontal width, viewport-optimal height (header ≈ 56px)     */
+/* -------------------------------------------------------------------------- */
+
+ytd-watch-flexy[theater] #player-theater-container,
+ytd-watch-flexy[theater] #player-full-bleed-container,
+ytd-watch-flexy[theater] #full-bleed-container {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-height: 0 !important;
+  max-height: calc(100vh - 56px) !important;
+  height: calc(100vh - 56px) !important;
+  margin: 0 !important;
+}
+
+ytd-watch-flexy[theater] #player-theater-container .html5-video-player,
+ytd-watch-flexy[theater] #player-full-bleed-container .html5-video-player,
+ytd-watch-flexy[theater] #full-bleed-container .html5-video-player {
+  width: 100% !important;
+  height: 100% !important;
+  max-height: calc(100vh - 56px) !important;
+}
+
+ytd-watch-flexy[theater] #player-theater-container video.html5-main-video,
+ytd-watch-flexy[theater] #player-full-bleed-container video.html5-main-video,
+ytd-watch-flexy[theater] #full-bleed-container video.html5-main-video {
+  left: 0 !important;
+  width: 100% !important;
+  max-height: calc(100vh - 56px) !important;
+}
+
+/* Counter A/B experiments that shrink or inset the theater player */
+ytd-watch-flexy[theater][full-bleed-player],
+ytd-watch-flexy[theater][fullerscreen-styles],
+ytd-watch-flexy[theater][theater-enabled] {
+  --ytd-watch-flexy-max-width: 100% !important;
+  --ytd-watch-flexy-sidebar-width: 402px !important;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Columns: meta + comments (left) | related (right) under the player         */
+/* -------------------------------------------------------------------------- */
+
+ytd-watch-flexy[theater] #columns.ytd-watch-flexy,
+ytd-watch-flexy[theater] #columns {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: flex-start !important;
+  justify-content: center !important;
+  max-width: var(--ytd-watch-flexy-max-width, 1280px) !important;
+  margin: 0 auto !important;
+  padding: 24px 24px 0 !important;
+  box-sizing: border-box !important;
+}
+
+ytd-watch-flexy[theater] #primary.ytd-watch-flexy,
+ytd-watch-flexy[theater] #primary {
+  display: block !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  max-width: calc(
+    100% - var(--ytd-watch-flexy-sidebar-width, 402px) -
+      var(--ytd-margin-6x, 24px)
+  ) !important;
+  margin: 0 var(--ytd-margin-6x, 24px) 0 0 !important;
+  padding: 0 !important;
+  order: 1 !important;
+}
+
+ytd-watch-flexy[theater] #secondary.ytd-watch-flexy,
+ytd-watch-flexy[theater] #secondary {
+  display: block !important;
+  flex: 0 0 var(--ytd-watch-flexy-sidebar-width, 402px) !important;
+  width: var(--ytd-watch-flexy-sidebar-width, 402px) !important;
+  min-width: var(--ytd-watch-flexy-sidebar-width, 402px) !important;
+  max-width: var(--ytd-watch-flexy-sidebar-width, 402px) !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  order: 2 !important;
+}
+
+ytd-watch-flexy[theater] #secondary-inner {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Comments stay under video meta in #primary                                 */
+/* -------------------------------------------------------------------------- */
+
+ytd-watch-flexy[theater] #primary ytd-comments,
+ytd-watch-flexy[theater] #primary #comments {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-top: 24px !important;
+}
+
+/* Hide duplicate / side-panel comment hosts used by A/B layouts when primary
+   already has the classic comments block */
+ytd-watch-flexy[theater] #secondary ytd-comments,
+ytd-watch-flexy[theater] #panels-full-bleed-container ytd-comments {
+  display: none !important;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Related videos stay in the right sidebar                                   */
+/* -------------------------------------------------------------------------- */
+
+ytd-watch-flexy[theater] #secondary ytd-watch-next-secondary-results-renderer,
+ytd-watch-flexy[theater]
+  #secondary
+  #related
+  ytd-watch-next-secondary-results-renderer {
+  display: block !important;
+  width: 100% !important;
+}
+
+/* Undo side-by-side / chat-style experiments that pull related under primary */
+ytd-watch-flexy[theater] #primary ytd-watch-next-secondary-results-renderer {
+  display: none !important;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Below-player grid experiments (comments beside player)                     */
+/* -------------------------------------------------------------------------- */
+
+ytd-watch-flexy[theater][is-two-columns_] #columns,
+ytd-watch-flexy[theater][flexy] #columns {
+  display: flex !important;
+  flex-direction: row !important;
+}
+
+/* Keep below-the-fold content from stacking as a single full-bleed column */
+ytd-watch-flexy[theater] #below {
+  display: contents !important;
+}
+
+ytd-watch-flexy[theater] #below ytd-comments,
+ytd-watch-flexy[theater] #below #comments {
+  display: block !important;
+  width: 100% !important;
+}
+
+/* Narrow viewports: stack columns; still keep related after primary content */
+@media (max-width: 1000px) {
+  ytd-watch-flexy[theater] #columns.ytd-watch-flexy,
+  ytd-watch-flexy[theater] #columns {
+    flex-direction: column !important;
+  }
+
+  ytd-watch-flexy[theater] #primary.ytd-watch-flexy,
+  ytd-watch-flexy[theater] #primary,
+  ytd-watch-flexy[theater] #secondary.ytd-watch-flexy,
+  ytd-watch-flexy[theater] #secondary {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 0 24px 0 !important;
+  }
+}
