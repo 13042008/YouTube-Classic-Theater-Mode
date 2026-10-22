@@ -1,59 +1,137 @@
 /**
- * YouTube Classic Theater Mode
- * CSS-only restoration of the classic theater layout on /watch pages.
- * Scoped to ytd-watch-flexy[theater] — no effect on Home, Shorts, Channel, etc.
+ * YouTube Classic Theater Mode — CSS failsafes for Oct 2026 watch redesign
+ * + classic theater player sizing when [theater] is on.
+ *
+ * Primary fix is content/patch-flags.js (MAIN world). These rules clean up
+ * leftover side-rail space and restore classic theater proportions.
  */
 
+:root {
+  --ytctm-theater-h: min(56.25vw, 75vh);
+}
+
 /* -------------------------------------------------------------------------- */
-/* Player: full horizontal width, viewport-optimal height (header ≈ 56px)     */
+/* New UI leftovers: Info / Comments / Ask rail + reserved gutter             */
 /* -------------------------------------------------------------------------- */
 
-ytd-watch-flexy[theater] #player-theater-container,
-ytd-watch-flexy[theater] #player-full-bleed-container,
-ytd-watch-flexy[theater] #full-bleed-container {
-  width: 100% !important;
-  max-width: 100% !important;
-  min-height: 0 !important;
-  max-height: calc(100vh - 56px) !important;
-  height: calc(100vh - 56px) !important;
+ytd-watch-flexy #fixed-side-menu,
+ytd-watch-flexy yt-side-rail-view-model,
+.ytSideRailViewModelHost {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  width: 0 !important;
+  min-width: 0 !important;
+  max-width: 0 !important;
   margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  flex: 0 0 0 !important;
 }
 
-ytd-watch-flexy[theater] #player-theater-container .html5-video-player,
-ytd-watch-flexy[theater] #player-full-bleed-container .html5-video-player,
-ytd-watch-flexy[theater] #full-bleed-container .html5-video-player {
-  width: 100% !important;
-  height: 100% !important;
-  max-height: calc(100vh - 56px) !important;
+ytd-watch-flexy {
+  --ytd-watch-flexy-fixed-side-menu-width: 0px !important;
+  --ytd-watch-flexy-fixed-panels-width: 0px !important;
 }
 
-ytd-watch-flexy[theater] #player-theater-container video.html5-main-video,
-ytd-watch-flexy[theater] #player-full-bleed-container video.html5-main-video,
-ytd-watch-flexy[theater] #full-bleed-container video.html5-main-video {
+ytd-watch-flexy #columns::after {
+  content: none !important;
+  display: none !important;
+  width: 0 !important;
+  max-width: 0 !important;
+}
+
+ytd-watch-flexy #columns,
+ytd-watch-flexy #primary,
+ytd-watch-flexy #primary-inner {
+  margin-right: 0 !important;
+  padding-right: 0 !important;
+}
+
+ytd-watch-flexy[fixed-panels] #panels-full-bleed-container,
+ytd-watch-flexy #panels-full-bleed-container {
+  display: none !important;
+  width: 0 !important;
+  max-width: 0 !important;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Theater: scroll unlock + classic player height                             */
+/* -------------------------------------------------------------------------- */
+
+ytd-app {
+  overflow: auto !important;
+}
+
+ytd-app[scrolling] {
+  position: absolute !important;
+  top: 0 !important;
   left: 0 !important;
-  width: 100% !important;
-  max-height: calc(100vh - 56px) !important;
+  right: calc(
+    (var(--ytd-app-fullerscreen-scrollbar-width) + 1px) * -1
+  ) !important;
+  bottom: 0 !important;
+  overflow-x: auto !important;
 }
 
-/* Counter A/B experiments that shrink or inset the theater player */
-ytd-watch-flexy[theater][full-bleed-player],
-ytd-watch-flexy[theater][fullerscreen-styles],
-ytd-watch-flexy[theater][theater-enabled] {
-  --ytd-watch-flexy-max-width: 100% !important;
-  --ytd-watch-flexy-sidebar-width: 402px !important;
-}
-
-/* -------------------------------------------------------------------------- */
-/* Columns: meta + comments (left) | related (right) under the player         */
-/* -------------------------------------------------------------------------- */
-
+ytd-watch-flexy[theater][full-bleed-player] #single-column-container.ytd-watch-flexy,
+ytd-watch-flexy[theater][full-bleed-player] #columns.ytd-watch-flexy,
 ytd-watch-flexy[theater] #columns.ytd-watch-flexy,
 ytd-watch-flexy[theater] #columns {
   display: flex !important;
   flex-direction: row !important;
   align-items: flex-start !important;
   justify-content: center !important;
+}
+
+ytd-watch-flexy[theater]:not([fullscreen]) #full-bleed-container.ytd-watch-flexy,
+ytd-watch-flexy[theater]:not([fullscreen]) #full-bleed-container,
+ytd-watch-flexy[theater]:not([fullscreen]) #player-theater-container,
+ytd-watch-flexy[theater]:not([fullscreen]) #player-full-bleed-container,
+ytd-watch-flexy[theater]:not([fullscreen]) #player-wide-container,
+ytd-watch-flexy[theater]:not([fullscreen]) #player-container-outer.ytd-watch-flexy,
+ytd-watch-flexy[theater]:not([fullscreen]) #player-container-inner.ytd-watch-flexy,
+ytd-watch-flexy[theater]:not([fullscreen]) #player.ytd-watch-flexy,
+ytd-watch-flexy[theater]:not([fullscreen]) ytd-player {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: var(--ytctm-theater-h) !important;
+  min-height: 0 !important;
+  max-height: calc(100vh - 56px) !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+}
+
+ytd-watch-flexy[theater]:not([fullscreen]) #movie_player,
+ytd-watch-flexy[theater]:not([fullscreen]) .html5-video-player {
+  width: 100% !important;
+  height: 100% !important;
+  max-height: none !important;
+  border-radius: 0 !important;
+}
+
+ytd-watch-flexy[theater]:not([fullscreen]) video.html5-main-video {
+  left: 0 !important;
+  width: 100% !important;
+  max-height: none !important;
+  border-radius: 0 !important;
+  object-fit: contain !important;
+}
+
+ytd-watch-flexy[theater] #movie_player:not(.ytp-grid-ended-state) .ytp-fullscreen-grid {
+  display: none !important;
+  top: 100% !important;
+  opacity: 0 !important;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Theater columns: meta + comments | related                                 */
+/* -------------------------------------------------------------------------- */
+
+ytd-watch-flexy[theater] #columns.ytd-watch-flexy,
+ytd-watch-flexy[theater] #columns {
   max-width: var(--ytd-watch-flexy-max-width, 1280px) !important;
+  width: 100% !important;
   margin: 0 auto !important;
   padding: 24px 24px 0 !important;
   box-sizing: border-box !important;
@@ -76,6 +154,7 @@ ytd-watch-flexy[theater] #primary {
 ytd-watch-flexy[theater] #secondary.ytd-watch-flexy,
 ytd-watch-flexy[theater] #secondary {
   display: block !important;
+  visibility: visible !important;
   flex: 0 0 var(--ytd-watch-flexy-sidebar-width, 402px) !important;
   width: var(--ytd-watch-flexy-sidebar-width, 402px) !important;
   min-width: var(--ytd-watch-flexy-sidebar-width, 402px) !important;
@@ -86,69 +165,31 @@ ytd-watch-flexy[theater] #secondary {
 }
 
 ytd-watch-flexy[theater] #secondary-inner {
+  display: block !important;
   width: 100% !important;
-  max-width: 100% !important;
 }
-
-/* -------------------------------------------------------------------------- */
-/* Comments stay under video meta in #primary                                 */
-/* -------------------------------------------------------------------------- */
 
 ytd-watch-flexy[theater] #primary ytd-comments,
-ytd-watch-flexy[theater] #primary #comments {
+ytd-watch-flexy[theater] #primary #comments,
+ytd-watch-flexy[theater] #below ytd-comments,
+ytd-watch-flexy[theater] #below #comments {
   display: block !important;
+  visibility: visible !important;
   width: 100% !important;
   max-width: 100% !important;
-  margin-top: 24px !important;
 }
-
-/* Hide duplicate / side-panel comment hosts used by A/B layouts when primary
-   already has the classic comments block */
-ytd-watch-flexy[theater] #secondary ytd-comments,
-ytd-watch-flexy[theater] #panels-full-bleed-container ytd-comments {
-  display: none !important;
-}
-
-/* -------------------------------------------------------------------------- */
-/* Related videos stay in the right sidebar                                   */
-/* -------------------------------------------------------------------------- */
 
 ytd-watch-flexy[theater] #secondary ytd-watch-next-secondary-results-renderer,
-ytd-watch-flexy[theater]
-  #secondary
-  #related
-  ytd-watch-next-secondary-results-renderer {
+ytd-watch-flexy[theater] #secondary #related {
   display: block !important;
+  visibility: visible !important;
   width: 100% !important;
 }
 
-/* Undo side-by-side / chat-style experiments that pull related under primary */
-ytd-watch-flexy[theater] #primary ytd-watch-next-secondary-results-renderer {
-  display: none !important;
-}
-
-/* -------------------------------------------------------------------------- */
-/* Below-player grid experiments (comments beside player)                     */
-/* -------------------------------------------------------------------------- */
-
-ytd-watch-flexy[theater][is-two-columns_] #columns,
-ytd-watch-flexy[theater][flexy] #columns {
-  display: flex !important;
-  flex-direction: row !important;
-}
-
-/* Keep below-the-fold content from stacking as a single full-bleed column */
 ytd-watch-flexy[theater] #below {
   display: contents !important;
 }
 
-ytd-watch-flexy[theater] #below ytd-comments,
-ytd-watch-flexy[theater] #below #comments {
-  display: block !important;
-  width: 100% !important;
-}
-
-/* Narrow viewports: stack columns; still keep related after primary content */
 @media (max-width: 1000px) {
   ytd-watch-flexy[theater] #columns.ytd-watch-flexy,
   ytd-watch-flexy[theater] #columns {

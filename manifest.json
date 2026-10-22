@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "YouTube Classic Theater Mode",
-  "version": "1.0.0",
-  "description": "Restore the classic YouTube Theater Mode layout: full-width player, comments below on the left, related videos on the right.",
+  "version": "1.2.0",
+  "description": "Disable the Oct 2026 side-rail watch UI and restore classic Theater Mode layout on YouTube desktop.",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
@@ -10,11 +10,15 @@
   },
   "content_scripts": [
     {
-      "matches": [
-        "*://www.youtube.com/watch*",
-        "*://youtube.com/watch*"
-      ],
+      "matches": ["*://www.youtube.com/*", "*://youtube.com/*"],
+      "js": ["content/patch-flags.js"],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": ["*://www.youtube.com/*", "*://youtube.com/*"],
       "css": ["styles/classic-theater.css"],
+      "js": ["content/classic-theater.js"],
       "run_at": "document_start"
     }
   ]
